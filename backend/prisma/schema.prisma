@@ -1,0 +1,77 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BillingType {
+  HOURLY
+  FIXED
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  ABANDONED
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  clients   Client[]
+  sessions  Session[]
+}
+
+model Client {
+  id            String      @id @default(cuid())
+  userId        String
+  name          String
+  billingType   BillingType
+  hourlyRate    Decimal?    @db.Decimal(10, 2)
+  fixedRate     Decimal?    @db.Decimal(10, 2)
+  monthlyBudget Decimal?    @db.Decimal(10, 2)
+  notes         String?
+  tags          String[]    @default([])
+  deletedAt     DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions Session[]
+
+  @@index([userId])
+}
+
+model Session {
+  id              String        @id @default(cuid())
+  clientId        String
+  userId          String
+  startTime       DateTime      @default(now())
+  endTime         DateTime?
+  durationSecs    Int?
+  cost            Decimal?      @db.Decimal(10, 2)
+  notes           String?
+  status          SessionStatus @default(ACTIVE)
+  // Snapshot billing info at session start so history is immutable
+  billingSnapshot Decimal       @db.Decimal(10, 2)
+  billingType     BillingType
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([userId])
+  @@index([status])
+  @@index([startTime])
+}
