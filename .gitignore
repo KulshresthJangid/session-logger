@@ -7,3 +7,5 @@ build/
 .DS_Store
 coverage/
 .nyc_output/
+logs/
+server.pid

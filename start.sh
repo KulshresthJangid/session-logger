@@ -80,12 +80,17 @@ step "Building frontend (Vite, base=/session-logger/)..."
 npm run build
 ok "Frontend built → frontend/dist/"
 
-# ── 5. Start backend (serves both API and frontend static files) ──────────────
-step "Starting backend server..."
+# ── 5. Start backend detached (serves both API and frontend static files) ──────
+step "Starting backend server (detached)..."
+LOG_DIR="$ROOT_DIR/logs"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/server.log"
 cd "$BACKEND_DIR"
-NODE_ENV=production node dist/server.js &
+nohup node dist/server.js > "$LOG_FILE" 2>&1 &
 BACKEND_PID=$!
-ok "Backend started (PID: $BACKEND_PID)."
+# Persist the PID so stop.sh (or the operator) can kill it later.
+echo "$BACKEND_PID" > "$ROOT_DIR/server.pid"
+ok "Backend started (PID: $BACKEND_PID) — logs: logs/server.log"
 
 # ── 6. Health check ───────────────────────────────────────────────────────────
 step "Waiting for server to accept connections..."
@@ -124,17 +129,9 @@ echo -e "  ${BOLD}Nginx reverse-proxy snippet:${RESET}"
 echo "    location /session-logger { proxy_pass http://127.0.0.1:3001; }"
 echo "    location /api            { proxy_pass http://127.0.0.1:3001; }"
 echo ""
-echo "  Press Ctrl+C to stop all services."
+echo -e "  ${BOLD}Logs${RESET}          $LOG_FILE"
+echo -e "  ${BOLD}PID file${RESET}      $ROOT_DIR/server.pid"
 echo ""
-
-# ── 8. Graceful shutdown ──────────────────────────────────────────────────────
-cleanup() {
-  echo ""
-  step "Shutting down..."
-  kill "$BACKEND_PID" 2>/dev/null || true
-  docker compose -f "$ROOT_DIR/docker-compose.yml" stop postgres
-  ok "Done."
-}
-trap cleanup EXIT INT TERM
-
-wait "$BACKEND_PID"
+echo -e "  To stop the server:  kill \$(cat server.pid)"
+echo -e "  To tail logs:        tail -f logs/server.log"
+echo ""
