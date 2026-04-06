@@ -18,7 +18,7 @@ Freelancers and consultants who bill clients hourly (or per project) typically j
 ---
 
 ## Live Access
-**URL:** https://session-logger.buildwithkulshresth.com
+**URL:** https://buildwithkulshresth.com/session-logger
 
 **Demo credentials** (read-only sandbox, data resets periodically):
 - Email: `admin@example.com`
