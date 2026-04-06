@@ -52,7 +52,8 @@ set +a
 
 step "Installing backend dependencies..."
 cd "$BACKEND_DIR"
-npm ci --omit=dev --include=dev   # install all (need devDeps for TS build)
+# --include=dev ensures TypeScript and ts-node are present for the tsc build step.
+npm ci --include=dev
 ok "Backend dependencies installed."
 
 step "Generating Prisma client..."
@@ -70,7 +71,9 @@ ok "Backend built."
 # ── 4. Frontend: install → build ──────────────────────────────────────────────
 step "Installing frontend dependencies..."
 cd "$FRONTEND_DIR"
-npm ci
+# NODE_ENV=production (from .env.production) would make npm skip devDependencies.
+# --include=dev forces TypeScript, Vite, and other build tools to be installed.
+npm ci --include=dev
 ok "Frontend dependencies installed."
 
 step "Building frontend (Vite, base=/session-logger/)..."
