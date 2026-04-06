@@ -43,17 +43,24 @@ done
 ok "PostgreSQL is ready."
 
 # ── 3. Backend: install → generate Prisma client → migrate → build ───────────
+# Load .env.production into the current shell so Prisma CLI can read DATABASE_URL
+# and other vars (Prisma CLI only auto-reads .env, not per-environment files).
+set -a
+# shellcheck source=backend/.env.production
+source "$BACKEND_DIR/.env.production"
+set +a
+
 step "Installing backend dependencies..."
 cd "$BACKEND_DIR"
 npm ci --omit=dev --include=dev   # install all (need devDeps for TS build)
 ok "Backend dependencies installed."
 
 step "Generating Prisma client..."
-NODE_ENV=production npx prisma generate
+npx prisma generate
 ok "Prisma client generated."
 
 step "Running database migrations (migrate deploy)..."
-NODE_ENV=production npx prisma migrate deploy
+npx prisma migrate deploy
 ok "Migrations applied."
 
 step "Building backend (TypeScript → dist/)..."
