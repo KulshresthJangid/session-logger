@@ -16,11 +16,11 @@ export function FloatingSessionAction() {
 
   return (
     <div className="fixed bottom-6 right-6 z-40">
-      <div className="bg-surface-secondary border border-success/30 rounded-xl shadow-2xl shadow-success/10 min-w-64">
+      <div className="bg-surface-secondary border border-surface-border rounded-xl shadow-2xl shadow-black/40 min-w-64">
         {/* Header */}
         <button
           onClick={() => setExpanded((e) => !e)}
-          className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-success"
+          className="flex items-center justify-between w-full px-4 py-3 text-sm font-medium text-white"
         >
           <div className="flex items-center gap-2">
             <Zap size={14} fill="currentColor" />

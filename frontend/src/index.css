@@ -44,8 +44,9 @@
   .btn-ghost {
     @apply btn bg-transparent text-muted hover:bg-surface-tertiary hover:text-white active:scale-95;
   }
+  /* Start Session / affirmative action — white-outlined in B&W theme */
   .btn-success {
-    @apply btn bg-success/10 text-success border border-success/30 hover:bg-success hover:text-surface active:scale-95;
+    @apply btn bg-white/5 text-white border border-white/20 hover:bg-white hover:text-surface active:scale-95;
   }
 
   .card {

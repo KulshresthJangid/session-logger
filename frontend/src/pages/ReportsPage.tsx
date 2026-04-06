@@ -96,8 +96,8 @@ export default function ReportsPage() {
             <p className="text-xs text-muted mt-1">Total Hours</p>
           </Card>
           <Card className="text-center">
-            <div className="flex justify-center mb-2 text-success"><DollarSign size={18} /></div>
-            <p className="text-2xl font-bold text-success">
+            <div className="flex justify-center mb-2 text-white"><DollarSign size={18} /></div>
+            <p className="text-2xl font-bold text-white">
               {formatCurrency(report.grandTotal.totalCost)}
             </p>
             <p className="text-xs text-muted mt-1">Total Billed</p>
@@ -125,7 +125,7 @@ export default function ReportsPage() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-success text-lg">
+                  <p className="font-bold text-white text-lg">
                     {formatCurrency(entry.totalCost)}
                   </p>
                   {entry.monthlyBudget != null && (
@@ -147,7 +147,7 @@ export default function ReportsPage() {
                   <div className="h-1.5 bg-surface-tertiary rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
-                        entry.isOverBudget ? 'bg-danger' : 'bg-success'
+                        entry.isOverBudget ? 'bg-danger' : 'bg-white'
                       }`}
                       style={{
                         width: `${Math.min(100, (entry.totalCost / entry.monthlyBudget) * 100)}%`,
@@ -190,7 +190,7 @@ export default function ReportsPage() {
                                 ? `${Math.floor(s.durationSecs / 60)}m`
                                 : '—'}
                             </td>
-                            <td className="py-2 pr-4 text-success">
+                            <td className="py-2 pr-4 text-white">
                               {s.cost != null ? formatCurrency(Number(s.cost)) : '—'}
                             </td>
                             <td className="py-2 text-muted truncate max-w-xs">

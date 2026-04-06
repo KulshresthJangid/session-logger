@@ -6,20 +6,20 @@ export default {
     extend: {
       colors: {
         surface: {
-          DEFAULT: '#0f1117',
-          secondary: '#161b22',
-          tertiary: '#21262d',
-          border: '#30363d',
+          DEFAULT: '#000000',      // pure black canvas
+          secondary: '#0d0d0d',    // cards
+          tertiary: '#1a1a1a',     // inputs, hover states
+          border: '#2e2e2e',       // dividers and borders
         },
         accent: {
-          DEFAULT: '#58a6ff',
-          hover: '#79b8ff',
-          muted: '#388bfd26',
+          DEFAULT: '#ffffff',      // white — the only 'colour'
+          hover: '#e0e0e0',
+          muted: '#ffffff14',      // subtle white fill
         },
-        success: '#3fb950',
-        warning: '#d29922',
-        danger: '#f85149',
-        muted: '#8b949e',
+        success: '#ffffff',        // live timers / active dot — white
+        warning: '#a3a3a3',        // neutral grey
+        danger: '#ef4444',         // red — kept only for destructive actions
+        muted: '#737373',          // secondary text
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Inter', 'Segoe UI', 'sans-serif'],

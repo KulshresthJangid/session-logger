@@ -130,7 +130,7 @@ export default function SessionsPage() {
                       ? formatDuration(session.durationSecs)
                       : <span className="text-muted">—</span>}
                   </td>
-                  <td className="px-4 py-3 font-medium text-success">
+                  <td className="px-4 py-3 font-medium text-white">
                     {session.cost != null
                       ? formatCurrency(Number(session.cost))
                       : <span className="text-muted">—</span>}

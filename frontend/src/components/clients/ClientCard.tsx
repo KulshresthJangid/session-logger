@@ -60,7 +60,7 @@ export function ClientCard({ client, activeSession, activeSessionLoading = false
           <button
             onClick={handleStart}
             disabled={startMutation.isPending}
-            className="flex items-center gap-2 w-full justify-center py-2 rounded-lg bg-success/10 text-success border border-success/20 hover:bg-success hover:text-surface text-sm font-medium transition-all active:scale-95 disabled:opacity-50"
+            className="flex items-center gap-2 w-full justify-center py-2 rounded-lg bg-white/5 text-white border border-white/20 hover:bg-white hover:text-surface text-sm font-medium transition-all active:scale-95 disabled:opacity-50"
           >
             <Play size={13} fill="currentColor" />
             Start Session
