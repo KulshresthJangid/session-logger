@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Filter } from 'lucide-react';
+import { Filter, Plus } from 'lucide-react';
 import { sessionsApi } from '@/api/sessions.api';
 import { clientsApi } from '@/api/clients.api';
 import { Card } from '@/components/ui/Card';
 import { Select } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { LogSessionModal } from '@/components/sessions/LogSessionModal';
 import { formatCurrency, formatDate, formatTime, formatDuration } from '@/lib/utils';
 
 export default function SessionsPage() {
@@ -14,6 +16,7 @@ export default function SessionsPage() {
   const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
+  const [logModalOpen, setLogModalOpen] = useState(false);
 
   const { data: clients = [] } = useQuery({
     queryKey: ['clients'],
@@ -37,12 +40,20 @@ export default function SessionsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-bold">Session Log</h1>
-        <p className="text-muted text-sm mt-0.5">
-          {pagination?.total ?? 0} total sessions
-        </p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold">Session Log</h1>
+          <p className="text-muted text-sm mt-0.5">
+            {pagination?.total ?? 0} total sessions
+          </p>
+        </div>
+        <Button onClick={() => setLogModalOpen(true)}>
+          <Plus size={14} className="mr-1.5" />
+          Log past session
+        </Button>
       </div>
+
+      <LogSessionModal isOpen={logModalOpen} onClose={() => setLogModalOpen(false)} />
 
       {/* Filters */}
       <Card className="flex flex-wrap gap-4 items-end">
