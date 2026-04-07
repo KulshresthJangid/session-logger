@@ -80,7 +80,30 @@ step "Building frontend (Vite, base=/session-logger/)..."
 npm run build
 ok "Frontend built → frontend/dist/"
 
-# ── 5. Start backend detached (serves both API and frontend static files) ──────
+# ── 5. Kill any existing backend before starting the new one ─────────────────
+PID_FILE="$ROOT_DIR/server.pid"
+if [[ -f "$PID_FILE" ]]; then
+  OLD_PID=$(cat "$PID_FILE")
+  if kill -0 "$OLD_PID" 2>/dev/null; then
+    step "Stopping existing backend (PID: $OLD_PID)..."
+    kill "$OLD_PID"
+    # Wait up to 10 s for the process to exit
+    for i in $(seq 1 10); do
+      kill -0 "$OLD_PID" 2>/dev/null || break
+      sleep 1
+    done
+    if kill -0 "$OLD_PID" 2>/dev/null; then
+      echo "  Process did not exit cleanly — sending SIGKILL..."
+      kill -9 "$OLD_PID" 2>/dev/null || true
+    fi
+    ok "Old backend stopped."
+  else
+    ok "PID file found but process $OLD_PID is not running — skipping."
+  fi
+  rm -f "$PID_FILE"
+fi
+
+# ── 6. Start backend detached (serves both API and frontend static files) ──────
 step "Starting backend server (detached)..."
 LOG_DIR="$ROOT_DIR/logs"
 mkdir -p "$LOG_DIR"
@@ -92,7 +115,7 @@ BACKEND_PID=$!
 echo "$BACKEND_PID" > "$ROOT_DIR/server.pid"
 ok "Backend started (PID: $BACKEND_PID) — logs: logs/server.log"
 
-# ── 6. Health check ───────────────────────────────────────────────────────────
+# ── 7. Health check ───────────────────────────────────────────────────────────
 step "Waiting for server to accept connections..."
 for i in $(seq 1 15); do
   if curl -sf http://localhost:3001/health > /dev/null 2>&1; then
@@ -107,7 +130,7 @@ for i in $(seq 1 15); do
   fi
 done
 
-# ── 7. Summary ────────────────────────────────────────────────────────────────
+# ── 8. Summary ────────────────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}════════════════════════════════════════════════════════${RESET}"
 echo -e "${BOLD}  Session Logger is running!${RESET}"
