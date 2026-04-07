@@ -50,9 +50,9 @@ export async function getMonthlyReport(
   }
 
   const report = Array.from(clientMap.values()).map((entry) => {
-    const totalSecs = entry.sessions.reduce((sum, s) => sum + (s.durationSecs ?? 0), 0);
+    const totalSecs = entry.sessions.reduce((sum: any, s: any) => sum + (s.durationSecs ?? 0), 0);
     const totalCost = entry.sessions.reduce(
-      (sum, s) => sum + parseFloat(s.cost?.toString() ?? '0'),
+      (sum: any, s: any) => sum + parseFloat(s.cost?.toString() ?? '0'),
       0,
     );
     return {
@@ -100,7 +100,7 @@ export async function getDashboardStats(userId: string) {
   ]);
 
   const totalRevenue = monthSessions.reduce(
-    (sum, s) => sum + parseFloat(s.cost?.toString() ?? '0'),
+    (sum: any, s: any) => sum + parseFloat(s.cost?.toString() ?? '0'),
     0,
   );
 
