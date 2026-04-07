@@ -1,7 +1,7 @@
 import { prisma } from '../../config/database';
 import { AppError } from '../../middleware/error.middleware';
 import { computeCost, computeDuration } from '../../utils/billing';
-import { StartSessionInput, EndSessionInput, ListSessionsQuery } from './sessions.schema';
+import { StartSessionInput, EndSessionInput, ListSessionsQuery, LogManualSessionInput } from './sessions.schema';
 
 export async function startSession(userId: string, input: StartSessionInput) {
   // Verify client belongs to this user
@@ -118,5 +118,39 @@ export async function abandonSession(userId: string, sessionId: string) {
   return prisma.session.update({
     where: { id: sessionId },
     data: { status: 'ABANDONED', endTime: new Date() },
+  });
+}
+
+export async function logManualSession(userId: string, input: LogManualSessionInput) {
+  const client = await prisma.client.findFirst({
+    where: { id: input.clientId, userId, deletedAt: null },
+  });
+  if (!client) throw new AppError(404, 'Client not found');
+
+  const startTime = new Date(input.startTime);
+  const endTime = new Date(input.endTime);
+  const durationSecs = computeDuration(startTime, endTime);
+
+  const billingSnapshot =
+    client.billingType === 'HOURLY'
+      ? parseFloat(client.hourlyRate?.toString() ?? '0')
+      : parseFloat(client.fixedRate?.toString() ?? '0');
+
+  const cost = computeCost(client.billingType, billingSnapshot, durationSecs);
+
+  return prisma.session.create({
+    data: {
+      clientId: input.clientId,
+      userId,
+      startTime,
+      endTime,
+      durationSecs,
+      cost,
+      notes: input.notes ?? null,
+      status: 'COMPLETED',
+      billingType: client.billingType,
+      billingSnapshot,
+    },
+    include: { client: { select: { id: true, name: true } } },
   });
 }
