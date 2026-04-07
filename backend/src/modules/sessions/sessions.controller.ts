@@ -40,3 +40,10 @@ export async function abandon(req: Request, res: Response, next: NextFunction) {
     res.json(session);
   } catch (err) { next(err); }
 }
+
+export async function logManual(req: Request, res: Response, next: NextFunction) {
+  try {
+    const session = await sessionsService.logManualSession(req.user!.userId, req.body);
+    res.status(201).json(session);
+  } catch (err) { next(err); }
+}
