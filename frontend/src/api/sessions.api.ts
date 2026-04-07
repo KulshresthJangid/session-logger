@@ -33,4 +33,14 @@ export const sessionsApi = {
     const res = await apiClient.patch<Session>(`/sessions/${sessionId}/abandon`);
     return res.data;
   },
+
+  logManual: async (data: {
+    clientId: string;
+    startTime: string;
+    endTime: string;
+    notes?: string | null;
+  }): Promise<Session> => {
+    const res = await apiClient.post<Session>('/sessions/manual', data);
+    return res.data;
+  },
 };
